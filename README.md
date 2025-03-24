@@ -1,5 +1,15 @@
-<<<<<<< HEAD
-# IENYR-backend, Elysia with Bun runtime
+<p align=center>
+ <img src=https://github.com/user-attachments/assets/25791740-1365-4715-ad82-76fff9708328 alt="logo-IENYR" width=480 />
+</p>
+
+<div align=center>
+  <h1>IT asset register system</h1>
+  <p>IENYR-backend, Elysia with Bun runtime</p>
+</div>
+
+## Introduction
+...
+
 
 ## Getting Started
 To get started with this template, simply paste this command into your terminal:
@@ -15,4 +25,3 @@ bun run dev
 
 Open http://localhost:3000/ with your browser to see the result.
 =======
->>>>>>> 0286b49318a17c1b0588797608240a55318e920d
