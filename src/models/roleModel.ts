@@ -15,7 +15,3 @@ export const roleModel = new Elysia()
 
 // Create the interface
 export type RoleBody = typeof roleInputBody.static;
-
-//export default roleModel;
-
-//export type RoleOutput = Role; // Minden adatbázisban lévő mezőt tartalmaz

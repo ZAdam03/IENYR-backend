@@ -4,16 +4,7 @@ import { t } from 'elysia';
 
 const prisma = new PrismaClient();
 
-// export const typeRole = t.Object({
-//     id: t.String(),
-//     name: t.String(),
-//     description: t.String(),
-//     permissions: t.Array(t.String())
-// });
-
-//export type IRole = typeof typeRole.static;
-
-export async function getRoles(): Promise<Role[]> {
+async function getAll(): Promise<Role[]> {
     try {
         return await prisma.role.findMany();
     } catch (error) {
@@ -22,7 +13,7 @@ export async function getRoles(): Promise<Role[]> {
     }
 }
 
-export async function getRole(id: string): Promise<Role | null> {
+async function getOne(id: string): Promise<Role | null> { //nem lehet null
     try {
         const role = await prisma.role.findUnique({
             where: {
@@ -36,7 +27,7 @@ export async function getRole(id: string): Promise<Role | null> {
     }
 }
 
-export async function createRole(role: RoleBody): Promise<Role> {
+async function create(role: RoleBody): Promise<Role> {
     try {
         return await prisma.role.create({
             data: {
@@ -52,7 +43,7 @@ export async function createRole(role: RoleBody): Promise<Role> {
     }
 }
 
-export async function updateRole(id: string, role: RoleBody): Promise<Role> {
+async function update(id: string, role: RoleBody): Promise<Role> {
     try {
         return await prisma.role.update({
             where: {
@@ -70,7 +61,7 @@ export async function updateRole(id: string, role: RoleBody): Promise<Role> {
     }
  }
 
- export async function deleteRole(id: string): Promise<Role> {
+async function del(id: string): Promise<Role> {
     try {
         return await prisma.role.delete({
             where: {
@@ -82,3 +73,5 @@ export async function updateRole(id: string, role: RoleBody): Promise<Role> {
         throw new Error("Failed to delete role");
     }
 }
+export { getAll as getRoles, getOne as getRole, create as createRole, 
+    update as updateRole, del as deleteRole };
