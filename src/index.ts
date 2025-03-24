@@ -43,6 +43,11 @@ const app = new Elysia()
                     }
                 }
             },
+            security: [
+                {
+                    bearerAuth: []
+                }
+            ],
             tags: [
                 { name: 'Roles', description: 'Szerepkörök' },
                 { name: 'Permissions', description: 'Jogosultságok' },
