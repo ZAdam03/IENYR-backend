@@ -82,7 +82,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                 try {
                     return await c.controller.getAll();
                 } catch (err) {
-                    return error(500, { message: err });
+                    return error(500, { message: `Database query failed: ${err}` });
                     // if (err instanceof CustomError) {
                     //     return error(err.status, { errorCode: err.code, message: err.message });
                     // } else {
@@ -101,7 +101,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                 try {
                     return await c.controller.getOne(params.id);
                 } catch (err) {
-                    return error(500, { message: err });
+                    return error(500, { message: `Database query failed: ${err}` });
                 }
             }
             return error(404, { message: 'Not Found' });
@@ -116,7 +116,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                 try {
                     return await c.controller.create(body as I);
                 } catch (err) {
-                    return error(500, { message: err });
+                    return error(500, { message: `Error in database insertion: ${err}` });
                 }
             }
             return error(404, { message: 'Not Found' });
@@ -131,7 +131,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                 try {
                     return await c.controller.update(params.id, body as I);
                 } catch (err) {
-                    return error(500, { message: err });
+                    return error(500, { message: `Error when updating the database: ${err}` });
                 }
             }
             return error(404, { message: 'Not Found' });
@@ -147,7 +147,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                 try {
                     return c.controller.delete(params.id);
                 } catch (err) {
-                    return error(500, { message: err });
+                    return error(500, { message: `Error when deleting from database: ${err}` });
                 }
             }
             return error(404, { message: 'Not Found' });
