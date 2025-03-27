@@ -2,6 +2,8 @@ import { PrismaClient, Role } from '@prisma/client';
 import { RoleBody } from '../models/roleModel';
 import { t } from 'elysia';
 
+//handler !!!!
+
 const prisma = new PrismaClient();
 
 async function getAll(): Promise<Role[]> {
@@ -9,17 +11,20 @@ async function getAll(): Promise<Role[]> {
         return await prisma.role.findMany();
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to fetch roles");
+        throw new CustomError(ErrorCodes.DB_QUERY_ERROR);
     }
 }
 
-async function getOne(id: string): Promise<Role | null> { //nem lehet null
+async function getOne(id: string): Promise<Role> { //nem lehet null
     try {
         const role = await prisma.role.findUnique({
             where: {
                 id
             }
         })
+        if (!role) {
+            throw new Error("Role not found");
+        }
         return role;
     } catch (error) {
         console.error(error);
@@ -45,6 +50,7 @@ async function create(role: RoleBody): Promise<Role> {
 
 async function update(id: string, role: RoleBody): Promise<Role> {
     try {
+        
         return await prisma.role.update({
             where: {
                 id
@@ -73,5 +79,4 @@ async function del(id: string): Promise<Role> {
         throw new Error("Failed to delete role");
     }
 }
-export { getAll as getRoles, getOne as getRole, create as createRole, 
-    update as updateRole, del as deleteRole };
+export { getAll, getOne, create, update, del };

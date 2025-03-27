@@ -17,11 +17,11 @@ const apiGroup = new Elysia({
                 return error(400, { message: 'Authorization header format is invalid' });
             }
             // Levágjuk a "Bearer " részt és elmentjük a bearer változóba
-            const bearer = auth.slice(7); // Levágjuk a "Bearer " szót
+            const token = auth.slice(7); // Levágjuk a "Bearer " szót
 
             // Visszatérünk a kontextussal, amely tartalmazza a bearer változót
             return {
-                bearer // A bearer változó hozzáadása a kontextushoz
+                token // A bearer változó hozzáadása a kontextushoz
             };
         } catch (err) {
             return error(400, { message: 'Authorization header is missing' });
@@ -32,7 +32,7 @@ const apiGroup = new Elysia({
     //valudáljuk a kérést, hogy formailag megfelel-e a követelményeinknek
     .guard({
 		headers: t.Object({
-			bearer: t.Optional(
+			token: t.Optional(
                 t.String({
                  //   pattern: '^Bearer .+$'
                 })
@@ -40,12 +40,29 @@ const apiGroup = new Elysia({
 		})
 	})
     //validáció után kiolvassuk a tokent és bearer változóként adjuk a kontextushoz
-	.resolve(({ headers, bearer }) => {
-        console.log(`a bearer: ${bearer}`);
-        
-		// return {
-		// 	groupIds:
-		// }
+    // új terv: csak kiolvassuk a payload-ból a group id-kat. Megkeressük a hozzá tartozó role-t és roles tömböt adunk hozzá a kontextushoz!!
+	.resolve(({ headers, token }) => {
+        try {
+            // verifyMicrosoftToken(token)
+            //     .then(payload => console.log("✅ Valid token, payload:", payload))
+            //     .catch(err => console.error("❌ Token verification failed:", err.message));
+
+            // const { kid, alg } = jwt.decode(token, { complete: true })?.header as JwtHeader;
+            // console.log(`a kid: ${ kid }`);
+            // if (!kid) throw new Error("No 'kid' found in token header");
+            // const jwksUri = 'https://login.microsoftonline.com/common/discovery/v2.0/keys';
+            // const client = new JwksClient({ jwksUri });
+            // const key = await client.getSigningKey(kid);
+
+        } catch (error) {
+            console.log("valami gebasz van");
+            console.log(error);
+        }
+        const roles = [ "Admin", "User" ];
+
+		return {
+			roles
+		};
 	})
     .use(rolesRoute)
    
