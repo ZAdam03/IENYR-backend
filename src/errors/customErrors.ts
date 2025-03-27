@@ -21,9 +21,14 @@ const ErrorCodes: Record<string, ErrorDefinition> = {
         message: 'Validációs hiba történt.',//Validation error occurred.
         status: 400,
     },
-    MISSING_FIELD_ERROR: {
+    MISSING_FIELD: {
         code: 'MISSING_FIELD_ERROR',
         message: 'Egy kötelező mező hiányzik.',//A required field is missing.
+        status: 400,
+    },
+    AUTHORIZATION_HEADER_INVALID:{
+        code: 'AUTHORIZATION_HEADER_INVALID',
+        message: 'Az engedélyezési fejléc formátuma érvénytelen',//Authorization header format is invalid
         status: 400,
     },
     AUTHENTICATION_ERROR: {

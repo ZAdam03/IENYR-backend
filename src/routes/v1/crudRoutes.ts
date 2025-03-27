@@ -17,7 +17,7 @@ interface CrudController<Input, Output> {
 
 //ha a modellhez nem kell az egyik route, le kell kezelni, hogy ne csatolódjon fel!!!
 export const createRoutes = <I,O>(c: CrudController<I,O>) => {
-    return new Elysia({
+    const app = new Elysia({
         prefix: `/v1${c.prefix}`,
         name: `route-v1${c.tag}`, // Egyedi név a deduplikációhoz
         seed: c.tag, // Seed a deduplikációhoz
@@ -76,78 +76,85 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         // }
     })
     
-    .get('/', async ({error}) => {
-        if (c.controller.getAll) {
-            try {
-                const result = await c.controller.getAll();
-                return result;
-            } catch (err) {
-                if (err instanceof CustomError) {
-                    return error(err.status, { errorCode: err.code, message: err.message });
-                } else {
-                    console.error('An unexpected error occurred:', err);
-                    return error(500, { errorCode: 'INTERNAL_ERROR', message: 'An unexpected error occurred' });
+    if (c.controller.getAll) {
+        app.get('/', async ({error}) => {
+            if (c.controller.getAll) {
+                try {
+                    return await c.controller.getAll();
+                } catch (err) {
+                    return error(500, { message: err });
+                    // if (err instanceof CustomError) {
+                    //     return error(err.status, { errorCode: err.code, message: err.message });
+                    // } else {
+                    //     console.error('An unexpected error occurred:', err);
+                    //     return error(500, { errorCode: 'INTERNAL_ERROR', message: 'An unexpected error occurred' });
+                    // }
                 }
             }
-        } else {
-            return error(404, { success: false, message: 'Not Found' });
-        }
-    })
-    
-    .get('/:id', async ({ params, error }) => {
-        if (!c.controller.getOne) {
-            return error(404, { success: false, message: 'Not Found' });
-        }
-        console.log("úgy tűnik mégis van");
-        return c.controller.getOne(params.id);
-    }, {
-        params: 'id'
-    })
-    
-    .post('/', async ({ body, error }) => {
-        if (c.controller.create) {
-            try {
-                const result = await c.controller.create(body as I);
-                if (!result) 
-                    return error(400, { 
-                        error: 'Something went wrong',
-                        success: false, 
-                        message: 'Unauthorized'
-                    }) 
-                return { success: true, result };
-            } catch (error) {
-                
+            return error(404, { message: 'Not Found' });
+        })
+    }
+
+    if (c.controller.getOne) {
+        app.get('/:id', async ({ params, error }) => {
+            if (c.controller.getOne) {
+                try {
+                    return await c.controller.getOne(params.id);
+                } catch (err) {
+                    return error(500, { message: err });
+                }
             }
-        } else {
-            
-        }
-    }, {
-        body: 'body'
-    })
+            return error(404, { message: 'Not Found' });
+        }, {
+            params: 'id'
+        })
+    }
     
-    .put('/:id', async ({ params, body }) => {
-        if (c.controller.update) {
-            try {
-                const result = await c.controller.update(params.id, body as I);
-                if (!result)
-                    return error
-            } catch (error) {
-                
+    if (c.controller.create) {
+        app.post('/', async ({ body, error }) => {
+            if (c.controller.create) {
+                try {
+                    return await c.controller.create(body as I);
+                } catch (err) {
+                    return error(500, { message: err });
+                }
             }
-        } else {
-            
-        }
-    }, {
-        params: 'id',
-        body: 'body'
-    })
+            return error(404, { message: 'Not Found' });
+        }, {
+            body: 'body'
+        })
+    }
     
-    .delete('/:id', async ({ params, error }) => {
-        if (!c.controller.delete) {
-            return error(404, { success: false, message: 'Not Found' });
-        }
-        return c.controller.delete(params.id);
-    }, {
-        params: 'id'
-    })
+    if (c.controller.update) {
+        app.put('/:id', async ({ params, body }) => {
+            if (c.controller.update) {
+                try {
+                    return await c.controller.update(params.id, body as I);
+                } catch (err) {
+                    return error(500, { message: err });
+                }
+            }
+            return error(404, { message: 'Not Found' });
+        }, {
+            params: 'id',
+            body: 'body'
+        })
+    }
+    
+    if (c.controller.delete) {
+        app.delete('/:id', async ({ params, error }) => {
+            if (c.controller.delete) {
+                try {
+                    return c.controller.delete(params.id);
+                } catch (err) {
+                    return error(500, { message: err });
+                }
+            }
+            return error(404, { message: 'Not Found' });
+        }, {
+            params: 'id'
+        })
+    }
+
+    return app;
 };

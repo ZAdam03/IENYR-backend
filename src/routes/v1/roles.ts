@@ -1,5 +1,5 @@
 import { createRoutes } from "./crudRoutes";
-import { getAll, getOne, create, update, del } from '../../controllers/rolesController';
+import { getAllHandler, getOneHandler, createHandler, updateHandler, deleteHandler } from '../../controllers/rolesController';
 import { RoleBody, roleInputBody, roleModel } from '../../models/roleModel';
 import { Role } from '@prisma/client';
 import Elysia from "elysia";
@@ -13,10 +13,10 @@ export const rolesRoute = createRoutes<RoleBody, Role>({
     description: 'A fő szerepkörök melyek az Entra ID csoporthoz vannak kötve és Permission van hozzájuk rendelve.',
     model: roleInputBody,
     controller: {
-        getAll: getAll,
-        getOne: getOne,
-        create: create,
-        update: update,
-        delete: del,
+        getAll: getAllHandler,
+        getOne: getOneHandler,
+        create: createHandler,
+        update: updateHandler,
+        delete: deleteHandler,
     },
 });

@@ -1,21 +1,23 @@
 import { PrismaClient, Role } from '@prisma/client';
 import { RoleBody } from '../models/roleModel';
 import { t } from 'elysia';
+import { toArrayBuffer } from 'bun:ffi';
 
 //handler !!!!
 
 const prisma = new PrismaClient();
 
-async function getAll(): Promise<Role[]> {
+async function getAllHandler(): Promise<Role[]> {
     try {
         return await prisma.role.findMany();
     } catch (error) {
         console.error(error);
+        throw new Error(`Database query failed: ${error}`);
         throw new CustomError(ErrorCodes.DB_QUERY_ERROR);
     }
 }
 
-async function getOne(id: string): Promise<Role> { //nem lehet null
+async function getOneHandler(id: string): Promise<Role> { //nem lehet null
     try {
         const role = await prisma.role.findUnique({
             where: {
@@ -23,16 +25,17 @@ async function getOne(id: string): Promise<Role> { //nem lehet null
             }
         })
         if (!role) {
-            throw new Error("Role not found");
+            throw new Error(`Data not found in the database.`);
         }
         return role;
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to fetch role");
+        throw new Error(`Database query failed: ${error}`);
+        throw new CustomError(ErrorCodes.DB_QUERY_ERROR);
     }
 }
 
-async function create(role: RoleBody): Promise<Role> {
+async function createHandler(role: RoleBody): Promise<Role> {
     try {
         return await prisma.role.create({
             data: {
@@ -44,11 +47,11 @@ async function create(role: RoleBody): Promise<Role> {
     }
     catch (error) {
         console.error(error);
-        throw new Error("Failed to create role");
+        throw new Error(`Error in database insertion: ${error}`);
     }
 }
 
-async function update(id: string, role: RoleBody): Promise<Role> {
+async function updateHandler(id: string, role: RoleBody): Promise<Role> {
     try {
         
         return await prisma.role.update({
@@ -63,11 +66,11 @@ async function update(id: string, role: RoleBody): Promise<Role> {
         });
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to update role");
+        throw new Error(`Error when updating the database: ${error}`);
     }
  }
 
-async function del(id: string): Promise<Role> {
+async function deleteHandler(id: string): Promise<Role> {
     try {
         return await prisma.role.delete({
             where: {
@@ -76,7 +79,7 @@ async function del(id: string): Promise<Role> {
         });
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to delete role");
+        throw new Error(`Error when deleting from database: ${error}`);
     }
 }
-export { getAll, getOne, create, update, del };
+export { getAllHandler, getOneHandler, createHandler, updateHandler, deleteHandler };
