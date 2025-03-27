@@ -1,9 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
 import { RoleBody } from '../models/roleModel';
-import { t } from 'elysia';
-import { toArrayBuffer } from 'bun:ffi';
-
-//handler !!!!
 
 const prisma = new PrismaClient();
 
@@ -17,7 +13,7 @@ async function getAllHandler(): Promise<Role[]> {
     }
 }
 
-async function getOneHandler(id: string): Promise<Role> { //nem lehet null
+async function getOneHandler(id: string): Promise<Role> {
     try {
         const role = await prisma.role.findUnique({
             where: {

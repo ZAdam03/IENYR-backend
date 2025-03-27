@@ -18,7 +18,7 @@ interface CrudController<Input, Output> {
 //ha a modellhez nem kell az egyik route, le kell kezelni, hogy ne csatolódjon fel!!!
 export const createRoutes = <I,O>(c: CrudController<I,O>) => {
     const app = new Elysia({
-        prefix: `/v1${c.prefix}`,
+        prefix: `${c.prefix}`,
         name: `route-v1${c.tag}`, // Egyedi név a deduplikációhoz
         seed: c.tag, // Seed a deduplikációhoz
         detail: {

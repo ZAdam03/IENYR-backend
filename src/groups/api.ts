@@ -2,7 +2,7 @@ import Elysia, { t } from "elysia";
 import { rolesRoute } from "../routes/v1/roles";
 
 const apiGroup = new Elysia({
-    prefix: '/api',
+    prefix: '/api/v1',
     detail: {
         security: [ { bearerAuth: [] } ]
     }
