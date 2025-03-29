@@ -19,8 +19,8 @@ interface CrudController<Input, Output> {
 export const createRoutes = <I,O>(c: CrudController<I,O>) => {
     const app = new Elysia({
         prefix: `${c.prefix}`,
-        name: `route-v1${c.tag}`, // Egyedi név a deduplikációhoz
-        seed: c.tag, // Seed a deduplikációhoz
+        name: `route-v1${c.prefix}`, // Egyedi név a deduplikációhoz
+        seed: c.prefix, // Seed a deduplikációhoz
         detail: {
             tags: [c.tag],
             summary: c.summary,
@@ -67,7 +67,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         'id': t.Object({
             id: t.String()
         }),
-        'body': c.model,
+        //'body': c.model,
         // response: {
         //     '200': t.Object({
         //     }),
@@ -77,7 +77,10 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
     })
     
     if (c.controller.getAll) {
-        app.get('/', async ({error}) => {
+        // @ts-ignore
+        app.get('/', async ({ error, roles }) => {
+            const requiredPermission = `${c.tag}.ReadAll`;
+            console.log(roles);
             if (c.controller.getAll) {
                 try {
                     return await c.controller.getAll();
@@ -96,7 +99,8 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
     }
 
     if (c.controller.getOne) {
-        app.get('/:id', async ({ params, error }) => {
+        // @ts-ignore
+        app.get('/:id', async ({ params, error, roles }) => {
             if (c.controller.getOne) {
                 try {
                     return await c.controller.getOne(params.id);
@@ -111,7 +115,8 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
     }
     
     if (c.controller.create) {
-        app.post('/', async ({ body, error }) => {
+        // @ts-ignore
+        app.post('/', async ({ body, error, roles }) => {
             if (c.controller.create) {
                 try {
                     return await c.controller.create(body as I);
@@ -121,12 +126,13 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
             }
             return error(404, { message: 'Not Found' });
         }, {
-            body: 'body'
+            body: c.model
         })
     }
     
     if (c.controller.update) {
-        app.put('/:id', async ({ params, body }) => {
+        // @ts-ignore
+        app.put('/:id', async ({ params, body, roles }) => {
             if (c.controller.update) {
                 try {
                     return await c.controller.update(params.id, body as I);
@@ -137,12 +143,13 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
             return error(404, { message: 'Not Found' });
         }, {
             params: 'id',
-            body: 'body'
+            body: c.model
         })
     }
     
     if (c.controller.delete) {
-        app.delete('/:id', async ({ params, error }) => {
+        // @ts-ignore
+        app.delete('/:id', async ({ params, error, roles }) => {
             if (c.controller.delete) {
                 try {
                     return c.controller.delete(params.id);

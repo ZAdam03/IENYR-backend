@@ -1,14 +1,13 @@
 import { createRoutes } from "./crudRoutes";
-import { getAllHandler, getOneHandler, createHandler, updateHandler, deleteHandler } from '../../controllers/rolesController';
-import { RoleBody, roleInputBody, roleModel } from '../../models/roleModel';
+import { RoleBody, roleInputBody } from '../../models/v1/roleModel';
 import { Role } from '@prisma/client';
 import { roleController } from "../../controllers/RoleController";
 
-//routes/v1/roles.ts
+//routes/v1/role.ts
 
 export const rolesRoute = createRoutes<RoleBody, Role>({
-    prefix: '/roles',
-    tag: 'Roles',
+    prefix: '/role',
+    tag: 'Role',
     summary: 'Szerepkörök',
     description: 'A fő szerepkörök melyek az Entra ID csoporthoz vannak kötve és Permission van hozzájuk rendelve.',
     model: roleInputBody,
