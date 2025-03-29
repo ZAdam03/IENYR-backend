@@ -67,7 +67,7 @@ model User {
 model Toolbook {
   id              String   @id @default(uuid())
   userId          String
-  user            User     @relation("owner", fields: [userId], references: [id])
+  user            User     @relation("owner", fields: [userId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   createdAt       DateTime @default(now())
   isActive        Boolean  @default(true)
   deactivatedAt   DateTime?
@@ -79,13 +79,13 @@ model Toolbook {
 model ToolbookItem {
   id            String   @id @default(uuid())
   toolbookId    String
-  toolbook      Toolbook @relation(fields: [toolbookId], references: [id])
+  toolbook      Toolbook @relation(fields: [toolbookId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   itemId        String
   item          Item     @relation(fields: [itemId], references: [id])
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   createdById   String
-  createdBy     User     @relation("toolbookItemCreatedBy", fields: [createdById], references: [id])
+  createdBy     User     @relation("toolbookItemCreatedBy", fields: [createdById], references: [id], onUpdate: NoAction, onDelete: NoAction)
   deactivedAt   DateTime?
   deactivedById String?
   deactivedBy   User?    @relation("toolbookItemDeactivatedBy", fields: [deactivedById], references: [id])
@@ -95,7 +95,7 @@ model ToolbookItem {
 model ToolbookDocs {
   id             String   @id @default(uuid())
   toolbookItemId String
-  toolbookItem   ToolbookItem @relation(fields: [toolbookItemId], references: [id])
+  toolbookItem   ToolbookItem @relation(fields: [toolbookItemId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   path           String
   fileName       String
   fileType       String
@@ -164,7 +164,7 @@ model ItemPlace {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   createdById  String
-  createdBy    User     @relation("itemPlaceCreatedBy", fields: [createdById], references: [id])
+  createdBy    User     @relation("itemPlaceCreatedBy", fields: [createdById], references: [id], onUpdate: NoAction, onDelete: NoAction)
   deactivatedAt   DateTime?
   deactivatedById String?
   deactivatedBy   User? @relation("itemPlaceDeactivatedBy", fields: [deactivatedById], references: [id])
@@ -173,13 +173,13 @@ model ItemPlace {
 model StructureMapping {
   id              String   @id @default(uuid())
   parentItemId    String
-  parentItem      Item @relation("structureMappingParent", fields: [parentItemId], references: [id])
+  parentItem      Item @relation("structureMappingParent", fields: [parentItemId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   childItemId     String
   childItem       Item @relation("structureMappingChild", fields: [childItemId], references: [id])
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   createdById     String
-  createdBy       User     @relation("structureMappingCreatedBy", fields: [createdById], references: [id])
+  createdBy       User     @relation("structureMappingCreatedBy", fields: [createdById], references: [id], onUpdate: NoAction, onDelete: NoAction)
   deactivatedAt   DateTime?
   deactivatedById String?
   deactivatedBy   User? @relation("structureMappingDeactivatedBy", fields: [deactivatedById], references: [id])
@@ -192,7 +192,7 @@ model Cart {
   isShared     Boolean  @default(false)
   createdAt    DateTime @default(now())
   createdById  String
-  createdBy    User     @relation("cartCreatedBy", fields: [createdById], references: [id])
+  createdBy    User     @relation("cartCreatedBy", fields: [createdById], references: [id], onUpdate: NoAction, onDelete: NoAction)
   lastModifiedAt   DateTime @default(now())
   lastModifiedById String
   lastModifiedBy   User @relation("cartModifiedBy", fields: [lastModifiedById], references: [id])
@@ -212,7 +212,7 @@ model View {
   description  String
   createdAt    DateTime @default(now())
   createdById  String
-  createdBy    User     @relation("viewCreatedBy", fields: [createdById], references: [id])
+  createdBy    User     @relation("viewCreatedBy", fields: [createdById], references: [id], onUpdate: NoAction, onDelete: NoAction)
   lastModifiedAt   DateTime @default(now())
   lastModifiedById String
   lastModifiedBy   User @relation("viewModifiedBy", fields: [lastModifiedById], references: [id])
@@ -332,7 +332,7 @@ model Inventory {
 model InventoryItem {
   id           String   @id @default(uuid())
   inventoryId  String
-  inventory    Inventory @relation(fields: [inventoryId], references: [id])
+  inventory    Inventory @relation(fields: [inventoryId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   itemId       String
   item         Item     @relation(fields: [itemId], references: [id])
   isTrue       Boolean?
