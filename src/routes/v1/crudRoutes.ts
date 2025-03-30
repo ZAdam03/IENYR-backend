@@ -36,13 +36,31 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                         }
                     }
                 },
+                401: {
+                    description: 'Authorization header is missing or invalid.',
+                    content: {
+                        'application/json': {
+                            schema: t.Object({
+                                message: t.String(),
+                            })
+                        }
+                    }
+                },
                 404: {
                     description: 'NOT_FOUND',
                     content: {
                         'application/json': {
                             schema: t.Object({
-                                errorCode: t.Optional(t.String()),
-                                success: t.Optional(t.Boolean()),
+                                message: t.String(),
+                            })
+                        }
+                    }
+                },
+                500: {
+                    description: 'DATABASE_ERROR',
+                    content: {
+                        'application/json': {
+                            schema: t.Object({
                                 message: t.String(),
                             })
                         }
