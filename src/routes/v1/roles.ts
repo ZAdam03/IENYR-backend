@@ -1,21 +1,34 @@
 import { createRoutes } from "./crudRoutes";
-import { RoleBody, roleInputBody } from '../../models/v1/roleModel';
-import { Role } from '@prisma/client';
-import { roleController } from "../../controllers/RoleController";
+import { Role, Prisma } from '@prisma/client';
+//import { roleController as controller } from "../../controllers/RoleController";
+import { BaseHandler } from "../../controllers/BaseHandler";
+//import { BaseController } from "../../controllers/BaseController";
+import { RoleHandler } from "../../controllers/RoleHandler";
+import { RoleModel } from "../../models/v1/Role.M";
 
 //routes/v1/role.ts
 
-export const rolesRoute = createRoutes<RoleBody, Role>({
+const queryOptions = Prisma.validator<Prisma.RoleDefaultArgs>()({
+    include: { permissions: true },
+});
+type Query = typeof queryOptions;
+
+const handler = new RoleHandler();
+
+export const rolesRoute = createRoutes<RoleModel.INestedRes, RoleModel.ICreate, RoleModel.IUpdate, RoleModel.ISelfRes, Query>({
     prefix: '/role',
     tag: 'Role',
-    summary: 'Szerepkörök',
-    description: 'A fő szerepkörök melyek az Entra ID csoporthoz vannak kötve és Permission van hozzájuk rendelve.',
-    model: roleInputBody,
+    summary: 'Szerepkörök és jogok',
+    description: 'A fő szerepkörök melyek az Entra ID csoporthoz vannak kötve és Permission van hozzájuk rendelve. Lekérésnél a jogokat is visszadja.',
+    response:  RoleModel.TNestedRes,
+    createReq: RoleModel.TCreate,
+    updateReq: RoleModel.TUpdate,
     controller: {
-        getAll: roleController.getAll.bind(roleController),
-        getOne: roleController.getOne.bind(roleController),
-        create: roleController.create.bind(roleController),
-        update: roleController.update.bind(roleController),
-        delete: roleController.delete.bind(roleController),
+        getAll: handler.getAll.bind(handler),
+        getOne: handler.getOne.bind(handler),
+        create: handler.create.bind(handler),
+        update: handler.update.bind(handler),
+        delete: handler.delete.bind(handler),
     },
+    options: queryOptions,
 });

@@ -50,7 +50,7 @@ const app = new Elysia()
             ],
             tags: [
                 { name: 'Role', description: 'Szerepkörök' },
-                { name: 'RolePermisison', description: 'Szerepkörök jogosultságokhoz kapcsolva' },
+                { name: 'RolePermisison', description: 'Szerepkörök jogosultságokhoz kapcsolva' }, //rolesWithPermissions
                 { name: 'User', description: 'Felhasználók' },
                 { name: 'Toolbook', description: 'Szerszámkönyvek' },
                 { name: 'ToolbookDocs', description: 'Szerszámkönyv dokumentumok' },

@@ -1,9 +1,8 @@
 import Elysia, { t } from "elysia";
 import { rolesRoute } from "../routes/v1/roles";
-import { rolePermissionRoute } from "../routes/v1/rolesPermission";
-import { userController } from "../controllers/UserController";
 import { userRoute } from "../routes/v1/user";
 import { toolbookRoute } from "../routes/v1/toolbook";
+import { rolePermissionsRouter } from "../routes/v1/roleWithPermissions.R";
 
 const apiGroup = new Elysia({
     prefix: '/api/v1',
@@ -18,7 +17,7 @@ const apiGroup = new Elysia({
             // Ellenőrizzük a formátumot a reguláris kifejezéssel
             const bearerPattern = /^Bearer .+$/;
             if (!auth || !bearerPattern.test(auth)) {
-                return error(400, { message: 'Authorization header format is invalid' });
+                return error(401, { message: 'Authorization header format is invalid' });
             }
             // Levágjuk a "Bearer " részt és elmentjük a bearer változóba
             const token = auth.slice(7); // Levágjuk a "Bearer " szót
@@ -28,7 +27,7 @@ const apiGroup = new Elysia({
                 token // A bearer változó hozzáadása a kontextushoz
             };
         } catch (err) {
-            return error(400, { message: 'Authorization header is missing' });
+            return error(401, { message: 'Authorization header is missing' });
         }
         const auth = headers.authorization;
         console.log(headers.authorization);
@@ -69,8 +68,8 @@ const apiGroup = new Elysia({
 		};
 	})
     .use(rolesRoute)
-    .use(rolePermissionRoute)
-    .use(userRoute)
-    .use(toolbookRoute)
+    .use(rolePermissionsRouter)
+    //.use(userRoute)
+    //.use(toolbookRoute)
    
 export default apiGroup;

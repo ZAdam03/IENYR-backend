@@ -1,22 +1,36 @@
 import Elysia, { error, t } from "elysia";
 
-interface CrudController<Input, Output> {
+interface CrudControllerBase<NestedRes, CreateInput, UpdateInput, SelfRes, Query> {
     prefix: string;
     tag: string;
     summary?: string;
     description?: string;
-    model: any;
+    response: NestedRes; //sima Prisma model
+    createReq?: CreateInput;
+    updateReq?: UpdateInput;
+    options?: Query;
     controller: {
-        getAll?: () => Promise<Output[]>;
-        getOne?: (id: string) => Promise<Output>;
-        create?: (body: Input) => Promise<Output>;
-        update?: (id: string, body: Input) => Promise<Output>;
-        delete?: (id: string) => Promise<Output>;
+        getAll?: (options?: Query) => Promise<NestedRes[]>;
+        getOne?: (id: string, options?: Query, ) => Promise<NestedRes>;
+        create?: (body: CreateInput) => Promise<SelfRes>;
+        update?: (id: string, body: UpdateInput) => Promise<SelfRes>;
+        delete?: (id: string) => Promise<SelfRes>;
     }
 };
 
+// interface - a controller és a Res/Req közötti kapcsolat kialakításáért kell
+type CrudController<T, C, U, S, Q = any> = CrudControllerBase<T, C, U, S, Q> &
+    // @ts-ignore
+    (Required<Pick<CrudControllerBase<T, C, U, S, Q>, 'create'>> extends { controller: { create: unknown } } 
+        ? { createReq: C }
+        : {}) &
+    // @ts-ignore
+    (Required<Pick<CrudControllerBase<T, C, U, S, Q>, 'update'>> extends { controller: { update: unknown } } 
+        ? { updateReq: U }
+        : {});
+
 //ha a modellhez nem kell az egyik route, le kell kezelni, hogy ne csatolódjon fel!!!
-export const createRoutes = <I,O>(c: CrudController<I,O>) => {
+export const createRoutes = <T, C, U, S, Q>(c: CrudController<T, C, U, S, Q>) => {
     const app = new Elysia({
         prefix: `${c.prefix}`,
         name: `route-v1${c.prefix}`, // Egyedi név a deduplikációhoz
@@ -25,14 +39,14 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
             tags: [c.tag],
             summary: c.summary,
             description: c.description,
-            //requestBody: config.model,
             security: [ { bearerAuth: [] } ],
             responses: {
                 200: {
                     description: 'OK',
                     content: {
                         'application/json': {
-                            schema: c.model,
+                            //@ts-ignore
+                            schema: c.response,
                         }
                     }
                 },
@@ -67,31 +81,12 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
                     }
                 }
             }
-            // /* responses:
-            //     "200":
-            //         description: OK
-            //     "400":
-            //         description: Bad request. User ID must be an integer and larger than 0.
-            //     "401":
-            //         description: Authorization information is missing or invalid.
-            //     "404":
-            //         description: A user with the specified ID was not found.
-            //     "5XX":
-            //         description: Unexpected error.
-            //  */
         }
     })
     .model({
         'id': t.Object({
             id: t.String()
-        }),
-        //'body': c.model,
-        // response: {
-        //     '200': t.Object({
-        //     }),
-        //     '404': t.Object({
-        //     }),
-        // }
+        })
     })
     
     if (c.controller.getAll) {
@@ -99,9 +94,12 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         app.get('/', async ({ error, roles }) => {
             const requiredPermission = `${c.tag}.ReadAll`;
             console.log(roles);
+            const options = {
+                permissions: true,
+              };
             if (c.controller.getAll) {
                 try {
-                    return await c.controller.getAll();
+                    return await c.controller.getAll(c.options);
                 } catch (err) {
                     return error(500, { message: `Database query failed: ${err}` });
                     // if (err instanceof CustomError) {
@@ -121,7 +119,7 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         app.get('/:id', async ({ params, error, roles }) => {
             if (c.controller.getOne) {
                 try {
-                    return await c.controller.getOne(params.id);
+                    return await c.controller.getOne(params.id, c.options);
                 } catch (err) {
                     return error(500, { message: `Database query failed: ${err}` });
                 }
@@ -137,14 +135,16 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         app.post('/', async ({ body, error, roles }) => {
             if (c.controller.create) {
                 try {
-                    return await c.controller.create(body as I);
+                    type Body = typeof c.createReq;
+                    return await c.controller.create(body as C);
                 } catch (err) {
                     return error(500, { message: `Error in database insertion: ${err}` });
                 }
             }
             return error(404, { message: 'Not Found' });
         }, {
-            body: c.model
+            //@ts-ignore
+            body: c.createReq, detail: { requestBody: c.createReq }
         })
     }
     
@@ -153,7 +153,8 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
         app.put('/:id', async ({ params, body, roles }) => {
             if (c.controller.update) {
                 try {
-                    return await c.controller.update(params.id, body as I);
+                    type Body = typeof c.updateReq;
+                    return await c.controller.update(params.id, body as U);
                 } catch (err) {
                     return error(500, { message: `Error when updating the database: ${err}` });
                 }
@@ -161,7 +162,12 @@ export const createRoutes = <I,O>(c: CrudController<I,O>) => {
             return error(404, { message: 'Not Found' });
         }, {
             params: 'id',
-            body: c.model
+            //@ts-ignore
+            body: c.updateReq,
+            detail: {
+                //@ts-ignore
+                requestBody: c.updateReq //?????? ez kell?
+            }
         })
     }
     
