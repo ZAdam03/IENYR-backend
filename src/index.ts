@@ -3,11 +3,9 @@ import { Elysia } from "elysia";
 import apiGroup from "./groups/api";
 import devGroup from "./groups/dev";
 import { swagger } from '@elysiajs/swagger';
-import { rolesRoute } from "./routes/v1/roles";
+import { roleRouter } from "./routes/v1/role.R";
 
 //const setup = (app: Elysia) => app.decorate("db", new PrismaClient());
-
-console.log(rolesRoute instanceof Elysia); // true-nak kell lennie
 
 const app = new Elysia()
     app

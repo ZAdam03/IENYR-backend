@@ -1,6 +1,6 @@
 import Elysia, { error, t } from "elysia";
 
-interface CrudControllerBase<NestedRes, CreateInput, UpdateInput, SelfRes, Query> {
+interface CrudControllerBase<NestedRes, CreateInput, UpdateInput, SelfRes, Query = any> {
     prefix: string;
     tag: string;
     summary?: string;
@@ -30,7 +30,7 @@ type CrudController<T, C, U, S, Q = any> = CrudControllerBase<T, C, U, S, Q> &
         : {});
 
 //ha a modellhez nem kell az egyik route, le kell kezelni, hogy ne csatolódjon fel!!!
-export const createRoutes = <T, C, U, S, Q>(c: CrudController<T, C, U, S, Q>) => {
+export const createRoutes = <T, C, U, S, Q = any>(c: CrudController<T, C, U, S, Q>) => {
     const app = new Elysia({
         prefix: `${c.prefix}`,
         name: `route-v1${c.prefix}`, // Egyedi név a deduplikációhoz

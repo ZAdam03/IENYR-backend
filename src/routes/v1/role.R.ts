@@ -6,8 +6,6 @@ import { BaseHandler } from "../../controllers/BaseHandler";
 import { RoleHandler } from "../../controllers/RoleHandler";
 import { RoleModel } from "../../models/v1/Role.M";
 
-//routes/v1/role.ts
-
 const queryOptions = Prisma.validator<Prisma.RoleDefaultArgs>()({
     include: { permissions: true },
 });
@@ -15,7 +13,12 @@ type Query = typeof queryOptions;
 
 const handler = new RoleHandler();
 
-export const rolesRoute = createRoutes<RoleModel.INestedRes, RoleModel.ICreate, RoleModel.IUpdate, RoleModel.ISelfRes, Query>({
+export const roleRouter = createRoutes<
+    RoleModel.INestedRes, 
+    RoleModel.ICreate, 
+    RoleModel.IUpdate, 
+    RoleModel.ISelfRes, 
+    Query>({
     prefix: '/role',
     tag: 'Role',
     summary: 'Szerepkörök és jogok',

@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
  * @template SelfRes - Az adatbázis modell a típusa.
  * template Query - A lekérdezéshez használt paraméterek típusa.
  */
-export abstract class BaseHandler<NestedRes, CreateInput, UpdateInput, SelfRes> {
+export class BaseHandler<NestedRes, CreateInput, UpdateInput, SelfRes> {
     protected modelName: string;
 
     constructor(modelName: string) {
