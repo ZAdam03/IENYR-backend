@@ -36,7 +36,7 @@ model User {
   createdAt DateTime @default(now())
   azureId   String?
   azEmail   String?
-  lastLogin DateTime?
+  lastLogin DateTime? //még nem használjuk
   toolbook  Toolbook[] @relation("owner")
   deactivatedToolbooks Toolbook[] @relation("toolbookDeactivatedBy")
   createdToolbookItems ToolbookItem[] @relation("toolbookItemCreatedBy")
@@ -98,7 +98,7 @@ model ToolbookDocs {
 }
 
 model Item {
-  id           String   @id
+  id           String   @id @unique
   eid          String?   @unique
   description  String?
   type         String   // monitor, pc, laptop, printer, scanner, other

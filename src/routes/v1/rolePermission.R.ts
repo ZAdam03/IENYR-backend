@@ -1,7 +1,7 @@
 import { createRoutes } from "./crudRoutes";
 import { Prisma } from '@prisma/client';
 import { PermissionModel } from "../../models/v1/Permission.M";
-import { BaseHandler } from "../../controllers/BaseHandler";
+import { BaseHandler } from "../../handlers/BaseHandler";
 
 const handler = new BaseHandler<
     PermissionModel.IRes, 

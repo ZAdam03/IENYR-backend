@@ -1,11 +1,10 @@
-console.log("🟢 Szerver indítása...");
 import { Elysia } from "elysia";
 import apiGroup from "./groups/api";
 import devGroup from "./groups/dev";
 import { swagger } from '@elysiajs/swagger';
-import { roleRouter } from "./routes/v1/role.R";
 
 //const setup = (app: Elysia) => app.decorate("db", new PrismaClient());
+//console.log("🟢 Szerver indítása...");
 
 const app = new Elysia()
     app

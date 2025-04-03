@@ -1,8 +1,8 @@
 import Elysia, { t } from "elysia";
-import { roleRouter } from "../routes/v1/role.R";
-import { userRoute } from "../routes/v1/user";
-import { toolbookRoute } from "../routes/v1/toolbook";
+import { toolbookRouter } from "../routes/v1/toolbook.R";
 import { rolePermissionRouter } from "../routes/v1/rolePermission.R";
+import { roleRouter } from "../routes/v1/user.R";
+import { userRouter } from "../routes/v1/role.R";
 
 const apiGroup = new Elysia({
     prefix: '/api/v1',
@@ -69,7 +69,7 @@ const apiGroup = new Elysia({
 	})
     .use(roleRouter)
     .use(rolePermissionRouter)
-    //.use(userRoute)
-    //.use(toolbookRoute)
+    .use(userRouter)
+    //.use(toolbookRouter)
    
 export default apiGroup;

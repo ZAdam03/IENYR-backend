@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { t } from 'elysia';
 import { PermissionModel } from './Permission.M';
 

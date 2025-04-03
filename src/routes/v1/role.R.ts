@@ -1,9 +1,6 @@
 import { createRoutes } from "./crudRoutes";
-import { Role, Prisma } from '@prisma/client';
-//import { roleController as controller } from "../../controllers/RoleController";
-import { BaseHandler } from "../../controllers/BaseHandler";
-//import { BaseController } from "../../controllers/BaseController";
-import { RoleHandler } from "../../controllers/RoleHandler";
+import { Prisma } from '@prisma/client';
+import { RoleHandler } from "../../handlers/RoleHandler";
 import { RoleModel } from "../../models/v1/Role.M";
 
 const queryOptions = Prisma.validator<Prisma.RoleDefaultArgs>()({
@@ -13,7 +10,7 @@ type Query = typeof queryOptions;
 
 const handler = new RoleHandler();
 
-export const roleRouter = createRoutes<
+export const userRouter = createRoutes<
     RoleModel.INestedRes, 
     RoleModel.ICreate, 
     RoleModel.IUpdate, 
